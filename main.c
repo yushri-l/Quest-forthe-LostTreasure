@@ -137,6 +137,20 @@ void placeKeys(void)
 }
 
 /*
+ * placeDoors
+ * Randomly scatters DOORS (3) locked-door tiles on empty cells.
+ */
+void placeDoors(void)
+{
+    int i;
+
+    for (i = 0; i < DOORS; i++)
+    {
+        placeOnRandomEmpty(DOOR);
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -168,6 +182,7 @@ int main(void)
     placeTreasures();
     placeHealthPacks();
     placeKeys();
+    placeDoors();
     printMap();
 
     return 0;
