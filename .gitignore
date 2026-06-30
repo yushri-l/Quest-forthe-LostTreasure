@@ -1,0 +1,8 @@
+# Compiled binaries
+*.exe
+*.o
+quest
+
+# Save / log files generated at runtime
+savegame.dat
+gamelog.txt
