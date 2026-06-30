@@ -123,6 +123,20 @@ void placeHealthPacks(void)
 }
 
 /*
+ * placeKeys
+ * Randomly scatters KEYS (3) key tiles on empty cells.
+ */
+void placeKeys(void)
+{
+    int i;
+
+    for (i = 0; i < KEYS; i++)
+    {
+        placeOnRandomEmpty(KEY);
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -153,6 +167,7 @@ int main(void)
     placeWalls();
     placeTreasures();
     placeHealthPacks();
+    placeKeys();
     printMap();
 
     return 0;
