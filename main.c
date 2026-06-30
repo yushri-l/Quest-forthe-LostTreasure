@@ -6,6 +6,8 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>   /* rand, srand */
+#include <time.h>     /* time        */
 
 /* ---- Game constants (counts taken from the assignment spec) ---- */
 #define GRID_SIZE     15   /* the map is a 15 x 15 grid           */
@@ -61,6 +63,38 @@ void initializeMap(void)
 }
 
 /*
+ * placeOnRandomEmpty
+ * Picks a random empty interior cell and writes the given symbol there.
+ * Shared by the item-placement helpers so the search logic lives in one place.
+ */
+void placeOnRandomEmpty(char symbol)
+{
+    int row, col;
+
+    do
+    {
+        row = 1 + rand() % (GRID_SIZE - 2);   /* interior rows 1..13 */
+        col = 1 + rand() % (GRID_SIZE - 2);   /* interior cols 1..13 */
+    } while (map[row][col] != EMPTY);
+
+    map[row][col] = symbol;
+}
+
+/*
+ * placeWalls
+ * Randomly scatters WALLS (30) interior wall tiles on empty cells.
+ */
+void placeWalls(void)
+{
+    int i;
+
+    for (i = 0; i < WALLS; i++)
+    {
+        placeOnRandomEmpty(WALL);
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -85,7 +119,10 @@ int main(void)
     printf("   Quest for the Lost Treasure\n");
     printf("=================================\n");
 
+    srand((unsigned int)time(NULL));   /* seed the random generator once */
+
     initializeMap();
+    placeWalls();
     printMap();
 
     return 0;
