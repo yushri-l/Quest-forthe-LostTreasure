@@ -28,11 +28,45 @@
 char map[GRID_SIZE][GRID_SIZE];        /* the visible map                 */
 int  hiddenTrap[GRID_SIZE][GRID_SIZE]; /* 1 where a hidden trap sits      */
 
+/*
+ * initializeMap
+ * Clears both arrays to their empty state, then draws the border walls
+ * around the outermost ring of the grid.
+ */
+void initializeMap(void)
+{
+    int row, col;
+
+    /* Fill every cell as empty and clear all hidden traps. */
+    for (row = 0; row < GRID_SIZE; row++)
+    {
+        for (col = 0; col < GRID_SIZE; col++)
+        {
+            map[row][col] = EMPTY;
+            hiddenTrap[row][col] = 0;
+        }
+    }
+
+    /* Draw the border walls on the outer ring. */
+    for (row = 0; row < GRID_SIZE; row++)
+    {
+        map[row][0] = WALL;                 /* left column  */
+        map[row][GRID_SIZE - 1] = WALL;     /* right column */
+    }
+    for (col = 0; col < GRID_SIZE; col++)
+    {
+        map[0][col] = WALL;                 /* top row      */
+        map[GRID_SIZE - 1][col] = WALL;     /* bottom row   */
+    }
+}
+
 int main(void)
 {
     printf("=================================\n");
     printf("   Quest for the Lost Treasure\n");
     printf("=================================\n");
+
+    initializeMap();
 
     return 0;
 }
