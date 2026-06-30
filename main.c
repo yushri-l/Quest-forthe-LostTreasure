@@ -109,6 +109,20 @@ void placeTreasures(void)
 }
 
 /*
+ * placeHealthPacks
+ * Randomly scatters HEALTH_PACKS (5) health-pack tiles on empty cells.
+ */
+void placeHealthPacks(void)
+{
+    int i;
+
+    for (i = 0; i < HEALTH_PACKS; i++)
+    {
+        placeOnRandomEmpty(HEALTH);
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -138,6 +152,7 @@ int main(void)
     initializeMap();
     placeWalls();
     placeTreasures();
+    placeHealthPacks();
     printMap();
 
     return 0;
