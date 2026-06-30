@@ -60,6 +60,25 @@ void initializeMap(void)
     }
 }
 
+/*
+ * printMap
+ * Renders the visible grid to the console. Each cell is printed with a
+ * trailing space so the square map is easy to read.
+ */
+void printMap(void)
+{
+    int row, col;
+
+    for (row = 0; row < GRID_SIZE; row++)
+    {
+        for (col = 0; col < GRID_SIZE; col++)
+        {
+            printf("%c ", map[row][col]);
+        }
+        printf("\n");
+    }
+}
+
 int main(void)
 {
     printf("=================================\n");
@@ -67,6 +86,7 @@ int main(void)
     printf("=================================\n");
 
     initializeMap();
+    printMap();
 
     return 0;
 }
