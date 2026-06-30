@@ -95,6 +95,20 @@ void placeWalls(void)
 }
 
 /*
+ * placeTreasures
+ * Randomly scatters TREASURES (12) treasure tiles on empty cells.
+ */
+void placeTreasures(void)
+{
+    int i;
+
+    for (i = 0; i < TREASURES; i++)
+    {
+        placeOnRandomEmpty(TREASURE);
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -123,6 +137,7 @@ int main(void)
 
     initializeMap();
     placeWalls();
+    placeTreasures();
     printMap();
 
     return 0;
