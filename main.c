@@ -577,6 +577,45 @@ void saveGame(void)
 }
 
 /*
+ * loadGame
+ * Restores a saved session from savegame.dat. Returns 1 on success, or 0 if
+ * the file is missing or invalid (in which case the caller starts fresh).
+ * Every read is checked and the player count is range-validated.
+ */
+int loadGame(void)
+{
+    FILE *fp = fopen("savegame.dat", "rb");
+    int   count;
+    size_t cells = (size_t)(GRID_SIZE * GRID_SIZE);
+
+    if (fp == NULL)
+    {
+        return 0;   /* no save file present */
+    }
+
+    /* Player count must read correctly and be within range. */
+    if (fread(&count, sizeof(int), 1, fp) != 1 ||
+        count < 1 || count > MAX_PLAYERS)
+    {
+        fclose(fp);
+        return 0;
+    }
+
+    /* Read the remaining state; bail out if anything is short. */
+    if (fread(players, sizeof(Player), MAX_PLAYERS, fp) != (size_t)MAX_PLAYERS ||
+        fread(map, sizeof(char), cells, fp) != cells ||
+        fread(hiddenTrap, sizeof(int), cells, fp) != cells)
+    {
+        fclose(fp);
+        return 0;
+    }
+
+    playerCount = count;
+    fclose(fp);
+    return 1;
+}
+
+/*
  * gameLoop
  * The main turn loop. Each round the map is displayed, then every living
  * player takes a turn. The loop ends when the game is over or the player
