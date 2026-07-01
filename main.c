@@ -56,6 +56,7 @@ char   map[GRID_SIZE][GRID_SIZE];        /* the visible map              */
 int    hiddenTrap[GRID_SIZE][GRID_SIZE]; /* 1 where a hidden trap sits   */
 Player players[MAX_PLAYERS];             /* the players in the game      */
 int    playerCount = MAX_PLAYERS;        /* how many players are active  */
+int    gameQuit = 0;                     /* set to 1 to stop the game    */
 
 /*
  * initializeMap
@@ -385,7 +386,8 @@ void movePlayer(int index)
 
     if (fgets(input, sizeof(input), stdin) == NULL)
     {
-        return;   /* no input available */
+        gameQuit = 1;   /* end of input: stop the game */
+        return;
     }
     input[strcspn(input, "\n")] = '\0';   /* drop the trailing newline */
 
@@ -481,6 +483,39 @@ void printMap(void)
     }
 }
 
+/*
+ * gameLoop
+ * The main turn loop. Each round the map is displayed, then every living
+ * player takes a turn. The loop ends when the game is over or the player
+ * quits (end of input).
+ */
+void gameLoop(void)
+{
+    int p;
+
+    while (!isGameOver() && !gameQuit)
+    {
+        printMap();
+
+        for (p = 0; p < playerCount; p++)
+        {
+            if (players[p].health <= 0)
+            {
+                continue;   /* skip eliminated players */
+            }
+
+            movePlayer(p);
+
+            if (isGameOver() || gameQuit)
+            {
+                break;
+            }
+        }
+    }
+
+    printf("\n=== Game Over ===\n");
+}
+
 int main(void)
 {
     printf("=================================\n");
@@ -497,7 +532,7 @@ int main(void)
     placeDoors();
     placeTraps();
     placePlayers();
-    printMap();
+    gameLoop();
 
     return 0;
 }
