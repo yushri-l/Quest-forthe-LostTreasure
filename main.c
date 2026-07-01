@@ -11,6 +11,8 @@
 
 /* ---- Game constants (counts taken from the assignment spec) ---- */
 #define GRID_SIZE     15   /* the map is a 15 x 15 grid           */
+#define MAX_PLAYERS    2   /* Part A: exactly two players          */
+#define START_HEALTH 100   /* every player starts with 100 HP      */
 #define WALLS         30   /* random interior walls               */
 #define TREASURES     12   /* treasure tiles                      */
 #define HEALTH_PACKS   5   /* health packs                        */
@@ -26,9 +28,27 @@
 #define DOOR     'D'
 #define EMPTY    ' '
 
+/*
+ * Player
+ * Holds everything we track for a single player. Position is stored as
+ * (x, y) where x is the row and y is the column of the map grid.
+ */
+typedef struct
+{
+    char name[20];   /* player's name                         */
+    int  x;          /* current row on the map                */
+    int  y;          /* current column on the map             */
+    int  score;      /* points collected from treasures/bonus */
+    int  health;     /* hit points, starts at START_HEALTH    */
+    int  keys;       /* keys held in inventory                */
+    char symbol;     /* map symbol: '1' or '2'                */
+} Player;
+
 /* ---- Global game state ---- */
-char map[GRID_SIZE][GRID_SIZE];        /* the visible map                 */
-int  hiddenTrap[GRID_SIZE][GRID_SIZE]; /* 1 where a hidden trap sits      */
+char   map[GRID_SIZE][GRID_SIZE];        /* the visible map              */
+int    hiddenTrap[GRID_SIZE][GRID_SIZE]; /* 1 where a hidden trap sits   */
+Player players[MAX_PLAYERS];             /* the players in the game      */
+int    playerCount = MAX_PLAYERS;        /* how many players are active  */
 
 /*
  * initializeMap
