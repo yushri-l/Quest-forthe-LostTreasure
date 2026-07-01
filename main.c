@@ -151,6 +151,28 @@ void placeDoors(void)
 }
 
 /*
+ * placeTraps
+ * Marks TRAPS (10) cells in the hidden trap array only. A trap always sits
+ * on an empty-looking tile and is never written to the visible map, so
+ * players cannot see it until they step on it.
+ */
+void placeTraps(void)
+{
+    int i, row, col;
+
+    for (i = 0; i < TRAPS; i++)
+    {
+        do
+        {
+            row = 1 + rand() % (GRID_SIZE - 2);
+            col = 1 + rand() % (GRID_SIZE - 2);
+        } while (map[row][col] != EMPTY || hiddenTrap[row][col] != 0);
+
+        hiddenTrap[row][col] = 1;
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -183,6 +205,7 @@ int main(void)
     placeHealthPacks();
     placeKeys();
     placeDoors();
+    placeTraps();
     printMap();
 
     return 0;
