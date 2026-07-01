@@ -323,6 +323,34 @@ int remainingTreasures(void)
 }
 
 /*
+ * allEliminated
+ * Returns 1 if every player has 0 HP (nobody is left alive), otherwise 0.
+ */
+int allEliminated(void)
+{
+    int p;
+
+    for (p = 0; p < playerCount; p++)
+    {
+        if (players[p].health > 0)
+        {
+            return 0;   /* at least one player is still alive */
+        }
+    }
+    return 1;
+}
+
+/*
+ * isGameOver
+ * The game ends when all treasures have been collected or all players have
+ * been eliminated.
+ */
+int isGameOver(void)
+{
+    return (remainingTreasures() == 0) || allEliminated();
+}
+
+/*
  * isOccupied
  * Returns 1 if a player other than movingIndex is standing on (x, y).
  * Used to stop two players from sharing the same tile.
