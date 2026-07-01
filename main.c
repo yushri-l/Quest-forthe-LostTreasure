@@ -302,6 +302,27 @@ int isValidMove(int x, int y)
 }
 
 /*
+ * remainingTreasures
+ * Scans the map and returns how many treasure tiles are still uncollected.
+ */
+int remainingTreasures(void)
+{
+    int row, col, count = 0;
+
+    for (row = 0; row < GRID_SIZE; row++)
+    {
+        for (col = 0; col < GRID_SIZE; col++)
+        {
+            if (map[row][col] == TREASURE)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+/*
  * isOccupied
  * Returns 1 if a player other than movingIndex is standing on (x, y).
  * Used to stop two players from sharing the same tile.
