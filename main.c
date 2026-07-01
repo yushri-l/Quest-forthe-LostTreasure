@@ -6,8 +6,10 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>   /* rand, srand */
-#include <time.h>     /* time        */
+#include <stdlib.h>   /* rand, srand      */
+#include <time.h>     /* time             */
+#include <string.h>   /* strlen, strcspn  */
+#include <ctype.h>    /* toupper          */
 
 /* ---- Game constants (counts taken from the assignment spec) ---- */
 #define GRID_SIZE     15   /* the map is a 15 x 15 grid           */
@@ -297,6 +299,82 @@ int isValidMove(int x, int y)
     }
 
     return 1;
+}
+
+/*
+ * movePlayer
+ * Reads a move string for the given player, validates its length, then walks
+ * through each move one step at a time. Each step is checked for walls, edges,
+ * and locked doors (which consume a key). After a successful step the tile
+ * effects are applied and the player symbol is redrawn at the new position.
+ */
+void movePlayer(int index)
+{
+    char input[100];
+    int  len, i;
+
+    printf("%s, enter moves (up to 4 of W/A/S/D): ", players[index].name);
+
+    if (fgets(input, sizeof(input), stdin) == NULL)
+    {
+        return;   /* no input available */
+    }
+    input[strcspn(input, "\n")] = '\0';   /* drop the trailing newline */
+
+    len = strlen(input);
+    if (len > 4)
+    {
+        printf("More than 4 moves entered - turn cancelled.\n");
+        return;
+    }
+
+    for (i = 0; i < len; i++)
+    {
+        char c = toupper(input[i]);
+        int  dx = 0, dy = 0;
+        int  nx, ny;
+
+        if      (c == 'W') dx = -1;   /* up    */
+        else if (c == 'S') dx =  1;   /* down  */
+        else if (c == 'A') dy = -1;   /* left  */
+        else if (c == 'D') dy =  1;   /* right */
+        else
+        {
+            printf("Invalid move '%c' skipped.\n", input[i]);
+            continue;
+        }
+
+        nx = players[index].x + dx;
+        ny = players[index].y + dy;
+
+        /* Locked door: only passable if the player holds a key. */
+        if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE &&
+            map[nx][ny] == DOOR)
+        {
+            if (players[index].keys > 0)
+            {
+                players[index].keys--;
+                map[nx][ny] = EMPTY;   /* door unlocked, now passable */
+            }
+            else
+            {
+                printf("A locked door blocks the way - you need a key.\n");
+                continue;
+            }
+        }
+        else if (!isValidMove(nx, ny))
+        {
+            printf("Move blocked by a wall or the edge.\n");
+            continue;
+        }
+
+        /* Perform the step: leave the old tile, move, apply effects, redraw. */
+        map[players[index].x][players[index].y] = EMPTY;
+        players[index].x = nx;
+        players[index].y = ny;
+        processTile(index);
+        map[nx][ny] = players[index].symbol;
+    }
 }
 
 /*
