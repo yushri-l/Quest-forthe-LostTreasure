@@ -226,13 +226,14 @@ void placePlayers(void)
 
 /*
  * printMap
- * Renders the visible grid to the console. Each cell is printed with a
- * trailing space so the square map is easy to read.
+ * Renders the visible grid to the console followed by the player HUD, which
+ * shows each player's health, score, and key count.
  */
 void printMap(void)
 {
-    int row, col;
+    int row, col, i;
 
+    /* Draw the grid. */
     for (row = 0; row < GRID_SIZE; row++)
     {
         for (col = 0; col < GRID_SIZE; col++)
@@ -240,6 +241,15 @@ void printMap(void)
             printf("%c ", map[row][col]);
         }
         printf("\n");
+    }
+
+    /* Draw the player HUD. */
+    printf("\n");
+    for (i = 0; i < playerCount; i++)
+    {
+        printf("[%c] %-10s  HP: %3d   Score: %3d   Keys: %d\n",
+               players[i].symbol, players[i].name,
+               players[i].health, players[i].score, players[i].keys);
     }
 }
 
