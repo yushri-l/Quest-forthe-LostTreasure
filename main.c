@@ -302,6 +302,25 @@ int isValidMove(int x, int y)
 }
 
 /*
+ * isOccupied
+ * Returns 1 if a player other than movingIndex is standing on (x, y).
+ * Used to stop two players from sharing the same tile.
+ */
+int isOccupied(int x, int y, int movingIndex)
+{
+    int p;
+
+    for (p = 0; p < playerCount; p++)
+    {
+        if (p != movingIndex && players[p].x == x && players[p].y == y)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/*
  * movePlayer
  * Reads a move string for the given player, validates its length, then walks
  * through each move one step at a time. Each step is checked for walls, edges,
@@ -346,6 +365,13 @@ void movePlayer(int index)
 
         nx = players[index].x + dx;
         ny = players[index].y + dy;
+
+        /* Another player already occupies the target tile. */
+        if (isOccupied(nx, ny, index))
+        {
+            printf("Another player is standing there.\n");
+            continue;
+        }
 
         /* Locked door: only passable if the player holds a key. */
         if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE &&
