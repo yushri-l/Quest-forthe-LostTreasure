@@ -20,6 +20,11 @@
 #define DOORS          3   /* locked doors                        */
 #define TRAPS         10   /* hidden traps                        */
 
+/* ---- Tile effect values ---- */
+#define TREASURE_SCORE  10   /* score gained per treasure           */
+#define HEALTH_RESTORE  20   /* HP restored per health pack         */
+#define TRAP_DAMAGE     20   /* HP lost when a trap is triggered     */
+
 /* ---- Tile symbols ---- */
 #define WALL     '#'
 #define TREASURE 'T'
@@ -221,6 +226,54 @@ void placePlayers(void)
         players[i].x = row;
         players[i].y = col;
         map[row][col] = players[i].symbol;
+    }
+}
+
+/*
+ * processTile
+ * Applies the effects of the tile the given player is now standing on. The
+ * checks run in the order required by the spec: hidden trap, then treasure,
+ * then health pack, then key. Collected tiles are cleared from the map.
+ */
+void processTile(int index)
+{
+    int x = players[index].x;
+    int y = players[index].y;
+
+    /* 1. Hidden trap: deal damage once, then disarm it. */
+    if (hiddenTrap[x][y])
+    {
+        players[index].health -= TRAP_DAMAGE;
+        if (players[index].health < 0)
+        {
+            players[index].health = 0;
+        }
+        hiddenTrap[x][y] = 0;
+    }
+
+    /* 2. Treasure: add score and remove it. */
+    if (map[x][y] == TREASURE)
+    {
+        players[index].score += TREASURE_SCORE;
+        map[x][y] = EMPTY;
+    }
+
+    /* 3. Health pack: restore HP (capped) and remove it. */
+    if (map[x][y] == HEALTH)
+    {
+        players[index].health += HEALTH_RESTORE;
+        if (players[index].health > START_HEALTH)
+        {
+            players[index].health = START_HEALTH;
+        }
+        map[x][y] = EMPTY;
+    }
+
+    /* 4. Key: add to inventory and remove it. */
+    if (map[x][y] == KEY)
+    {
+        players[index].keys += 1;
+        map[x][y] = EMPTY;
     }
 }
 
