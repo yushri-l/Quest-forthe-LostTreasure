@@ -552,6 +552,31 @@ void showScores(void)
 }
 
 /*
+ * saveGame
+ * Writes the whole game state - player count, every player struct, the visible
+ * map, and the hidden trap array - to savegame.dat so the session can be
+ * restored later. Uses binary mode for an exact round-trip.
+ */
+void saveGame(void)
+{
+    FILE *fp = fopen("savegame.dat", "wb");
+
+    if (fp == NULL)
+    {
+        printf("Could not open save file.\n");
+        return;
+    }
+
+    fwrite(&playerCount, sizeof(int), 1, fp);
+    fwrite(players, sizeof(Player), MAX_PLAYERS, fp);
+    fwrite(map, sizeof(char), GRID_SIZE * GRID_SIZE, fp);
+    fwrite(hiddenTrap, sizeof(int), GRID_SIZE * GRID_SIZE, fp);
+
+    fclose(fp);
+    printf("Game saved.\n");
+}
+
+/*
  * gameLoop
  * The main turn loop. Each round the map is displayed, then every living
  * player takes a turn. The loop ends when the game is over or the player
