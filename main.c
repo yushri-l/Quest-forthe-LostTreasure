@@ -484,6 +484,74 @@ void printMap(void)
 }
 
 /*
+ * showScores
+ * Ends the game fairly: surviving players get a bonus of half their remaining
+ * HP, the players are ranked by score (selection sort), the leaderboard is
+ * printed, and the winner or a tie is declared.
+ */
+void showScores(void)
+{
+    int i, j, order[MAX_PLAYERS], topScore, winners;
+
+    /* 1. HP bonus: survivors gain floor(HP / 2) extra score. */
+    for (i = 0; i < playerCount; i++)
+    {
+        if (players[i].health > 0)
+        {
+            players[i].score += players[i].health / 2;
+        }
+    }
+
+    /* 2. Sort player indices by score, highest first (selection sort). */
+    for (i = 0; i < playerCount; i++)
+    {
+        order[i] = i;
+    }
+    for (i = 0; i < playerCount - 1; i++)
+    {
+        for (j = i + 1; j < playerCount; j++)
+        {
+            if (players[order[j]].score > players[order[i]].score)
+            {
+                int tmp  = order[i];
+                order[i] = order[j];
+                order[j] = tmp;
+            }
+        }
+    }
+
+    /* 3. Print the ranked leaderboard. */
+    printf("\n===== Final Leaderboard =====\n");
+    for (i = 0; i < playerCount; i++)
+    {
+        int idx = order[i];
+        printf("%d. %-10s  Score: %3d   HP: %3d\n",
+               i + 1, players[idx].name, players[idx].score, players[idx].health);
+    }
+
+    /* 4. Declare the winner, or a tie if several share the top score. */
+    topScore = players[order[0]].score;
+    winners  = 0;
+    for (i = 0; i < playerCount; i++)
+    {
+        if (players[i].score == topScore)
+        {
+            winners++;
+        }
+    }
+
+    if (winners > 1)
+    {
+        printf("\nIt's a tie at %d points!\n", topScore);
+    }
+    else
+    {
+        printf("\nWinner: %s with %d points!\n",
+               players[order[0]].name, topScore);
+    }
+}
+
+/*
  * gameLoop
  * The main turn loop. Each round the map is displayed, then every living
  * player takes a turn. The loop ends when the game is over or the player
@@ -514,6 +582,7 @@ void gameLoop(void)
     }
 
     printf("\n=== Game Over ===\n");
+    showScores();
 }
 
 int main(void)
