@@ -225,6 +225,28 @@ void placePlayers(void)
 }
 
 /*
+ * isValidMove
+ * Returns 1 if (x, y) is inside the grid and is not a wall, otherwise 0.
+ * Door handling (which needs a key) is done separately in movePlayer.
+ */
+int isValidMove(int x, int y)
+{
+    /* Out of bounds? */
+    if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE)
+    {
+        return 0;
+    }
+
+    /* A wall blocks the move. */
+    if (map[x][y] == WALL)
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+/*
  * printMap
  * Renders the visible grid to the console followed by the player HUD, which
  * shows each player's health, score, and key count.
