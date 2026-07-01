@@ -616,6 +616,25 @@ int loadGame(void)
 }
 
 /*
+ * askYesNo
+ * Prints a question and reads a line, returning 1 for a yes (y/Y) answer and
+ * 0 otherwise. Sets gameQuit if the input stream ends.
+ */
+int askYesNo(const char *question)
+{
+    char input[100];
+
+    printf("%s (y/n): ", question);
+
+    if (fgets(input, sizeof(input), stdin) == NULL)
+    {
+        gameQuit = 1;
+        return 0;
+    }
+    return (input[0] == 'y' || input[0] == 'Y');
+}
+
+/*
  * gameLoop
  * The main turn loop. Each round the map is displayed, then every living
  * player takes a turn. The loop ends when the game is over or the player
@@ -641,6 +660,15 @@ void gameLoop(void)
             if (isGameOver() || gameQuit)
             {
                 break;
+            }
+        }
+
+        /* After a complete round, offer to save the game. */
+        if (!isGameOver() && !gameQuit)
+        {
+            if (askYesNo("\nSave game?"))
+            {
+                saveGame();
             }
         }
     }
