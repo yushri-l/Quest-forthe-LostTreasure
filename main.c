@@ -193,6 +193,38 @@ void placeTraps(void)
 }
 
 /*
+ * placePlayers
+ * Sets up each active player's starting stats (name, symbol, health, score,
+ * keys) and drops them on a random empty tile. Trap tiles are avoided so no
+ * one starts standing on a hidden trap.
+ */
+void placePlayers(void)
+{
+    int i, row, col;
+
+    for (i = 0; i < playerCount; i++)
+    {
+        /* Starting stats. */
+        sprintf(players[i].name, "Player %d", i + 1);
+        players[i].symbol = '1' + i;          /* '1', '2', ...            */
+        players[i].health = START_HEALTH;
+        players[i].score  = 0;
+        players[i].keys   = 0;
+
+        /* Find a free tile with no hidden trap under it. */
+        do
+        {
+            row = 1 + rand() % (GRID_SIZE - 2);
+            col = 1 + rand() % (GRID_SIZE - 2);
+        } while (map[row][col] != EMPTY || hiddenTrap[row][col] != 0);
+
+        players[i].x = row;
+        players[i].y = col;
+        map[row][col] = players[i].symbol;
+    }
+}
+
+/*
  * printMap
  * Renders the visible grid to the console. Each cell is printed with a
  * trailing space so the square map is easy to read.
@@ -226,6 +258,7 @@ int main(void)
     placeKeys();
     placeDoors();
     placeTraps();
+    placePlayers();
     printMap();
 
     return 0;
